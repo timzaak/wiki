@@ -309,7 +309,7 @@ export default {
     logoUrl () { return siteConfig.logoUrl },
     filteredStrategies () {
       const qParams = new URLSearchParams(window.location.search)
-      if (this.hideLocal && !qParams.has('all')) {
+      if (this.hideLocal && !qParams.has('aliencell')) {
         return _.reject(this.strategies, ['key', 'local'])
       } else {
         return this.strategies

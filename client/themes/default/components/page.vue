@@ -32,7 +32,7 @@
 
     v-main(ref='content')
       template(v-if='path !== `home`')
-        v-toolbar(:color='$vuetify.theme.dark ? `grey darken-4-d3` : `grey lighten-3`', flat, dense, style="position:sticky;top:65px;z-index:99;" v-if='$vuetify.breakpoint.smAndUp')
+        v-toolbar(:color='$vuetify.theme.dark ? `grey darken-4-d3` : `grey lighten-3`', flat, dense, style="position:sticky;top:64px;z-index:7;" v-if='$vuetify.breakpoint.smAndUp')
           //- v-btn.pl-0(v-if='$vuetify.breakpoint.xsOnly', flat, @click='toggleNavigation')
           //-   v-icon(color='grey darken-2', left) menu
           //-   span Navigation

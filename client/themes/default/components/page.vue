@@ -502,6 +502,11 @@ export default {
         offset: 0,
         easing: 'easeInOutCubic'
       },
+      hashTagScrollOpts: {
+        duration: 1500,
+        offset: 64,
+        easing: 'easeInOutCubic'
+      },
       scrollStyle: {
         vuescroll: {},
         scrollPanel: {
@@ -625,11 +630,11 @@ export default {
     if (window.location.hash && window.location.hash.length > 1) {
       if (document.readyState === 'complete') {
         this.$nextTick(() => {
-          this.$vuetify.goTo(decodeURIComponent(window.location.hash), this.scrollOpts)
+          this.$vuetify.goTo(decodeURIComponent(window.location.hash), this.hashTagScrollOpts)
         })
       } else {
         window.addEventListener('load', () => {
-          this.$vuetify.goTo(decodeURIComponent(window.location.hash), this.scrollOpts)
+          this.$vuetify.goTo(decodeURIComponent(window.location.hash), this.hashTagScrollOpts)
         })
       }
     }
@@ -640,7 +645,7 @@ export default {
         el.onclick = ev => {
           // ev.preventDefault()
           // ev.stopPropagation()
-          this.$vuetify.goTo(decodeURIComponent(ev.currentTarget.hash), this.scrollOpts)
+          this.$vuetify.goTo(decodeURIComponent(ev.currentTarget.hash), this.hashTagScrollOpts)
         }
       })
 
@@ -655,7 +660,7 @@ export default {
       this.navOpen = !this.navOpen
     },
     menuClick (ev) {
-      this.$vuetify.goTo(decodeURIComponent(ev.currentTarget.hash), this.scrollOpts)
+      this.$vuetify.goTo(decodeURIComponent(ev.currentTarget.hash), this.hashTagScrollOpts)
     },
     upBtnScroll () {
       const scrollOffset = window.pageYOffset || document.documentElement.scrollTop

@@ -420,6 +420,33 @@ router.get('/*', async (req, res, next) => {
   const isPage = (stripExt || pageArgs.path.indexOf('.') === -1)
 
   if (isPage) {
+    // -> Accept-Language based redirection for root path
+    if (pageArgs.path === 'home' && !pageArgs.explicitLocale) {
+      const localeHelper = require('../helpers/locale')
+      const acceptLanguages = localeHelper.parseAcceptLanguage(req.headers['accept-language'])
+
+      // If Accept-Language header contains language preferences
+      if (acceptLanguages.length > 0) {
+        // Get list of active locales
+        const activeLocales = WIKI.config.lang.namespacing
+          ? WIKI.config.lang.namespaces
+          : [WIKI.config.lang.code]
+
+        // Try to find a matching locale with an existing home page
+        for (const langCode of acceptLanguages) {
+          // Check if the language is in the active locales list
+          if (activeLocales.includes(langCode)) {
+            const homeExists = await WIKI.models.pages.checkHomePageExists(langCode)
+            if (homeExists) {
+              const query = !_.isEmpty(req.query) ? `?${qs.stringify(req.query)}` : ''
+              return res.redirect(`/${langCode}/home${query}`)
+            }
+          }
+        }
+      }
+    }
+
+    // -> Original namespacing redirect (fallback)
     if (WIKI.config.lang.namespacing && !pageArgs.explicitLocale) {
       const query = !_.isEmpty(req.query) ? `?${qs.stringify(req.query)}` : ''
       return res.redirect(`/${pageArgs.locale}/${pageArgs.path}${query}`)

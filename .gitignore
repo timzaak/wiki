@@ -48,3 +48,4 @@ test-results/
 # Localization Resources
 /server/locales/**/*.yml
 dev.md
+spec-*.md

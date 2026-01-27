@@ -117,6 +117,15 @@
                     v-list-item-title {{lc.name}}
             v-divider(vertical)
 
+          //- SHOPPING CART
+
+          v-tooltip(bottom)
+            template(v-slot:activator='{ on }')
+              v-btn.ml-3(icon, v-on='on', href='https://shop.aliencell.com/', target='_blank', aria-label='Go Shopping')
+                v-icon(color='grey') mdi-cart-outline
+            span Go Shopping
+          v-divider(vertical)
+
           //- PAGE ACTIONS
 
           template(v-if='hasAnyPagePermissions && path && mode !== `edit`')

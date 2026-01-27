@@ -1044,6 +1044,27 @@ module.exports = class Page extends Model {
   }
 
   /**
+   * Check if a home page exists for the specified locale
+   *
+   * @param {string} localeCode - Locale code to check
+   * @returns {Promise<boolean>} True if home page exists, false otherwise
+   */
+  static async checkHomePageExists(localeCode) {
+    try {
+      const page = await WIKI.models.pages.query()
+        .select('id')
+        .where('path', 'home')
+        .where('localeCode', localeCode)
+        .where('isPublished', true)
+        .first()
+      return !!page
+    } catch (err) {
+      WIKI.logger.warn(`Failed to check home page for locale ${localeCode}: ${err.message}`)
+      return false
+    }
+  }
+
+  /**
    * Save a Page Model Instance to Cache
    *
    * @param {Object} page Page Model Instance

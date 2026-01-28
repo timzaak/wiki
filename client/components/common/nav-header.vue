@@ -92,6 +92,28 @@
             )
             v-icon(color='grey') mdi-magnify
 
+          //- ALIENCELL SHOP
+
+          v-tooltip(bottom)
+            template(v-slot:activator='{ on }')
+              v-btn.ml-3(
+                text
+                tile
+                height='64'
+                v-on='on'
+                href='https://shop.aliencell.com'
+                target='_blank'
+                aria-label='Visit aliencell.com shop'
+                class='aliencell-link'
+                )
+                span.aliencell-text aliencell.com
+                svg.icon-tabler-icons-tabler-outline.icon-tabler-arrow-up-right(xmlns='http://www.w3.org/2000/svg', width='14', height='14', viewBox='0 0 18 18', fill='none', stroke='currentColor', stroke-width='2', stroke-linecap='round', stroke-linejoin='round', style='margin-left: 4px')
+                  path(stroke='none', d='M0 0h24v24H0z', fill='none')
+                  path(d='M17 7l-10 10')
+                  path(d='M8 7l9 0l0 9')
+            span aliencell.com
+          v-divider(vertical)
+
           //- LANGUAGES
 
           template(v-if='mode === `view` && locales.length > 0')
@@ -116,15 +138,6 @@
                     v-list-item-action(style='min-width:auto;'): v-chip(:color='lc.code === locale ? `blue` : `grey`', small, label, dark) {{lc.code.toUpperCase()}}
                     v-list-item-title {{lc.name}}
             v-divider(vertical)
-
-          //- SHOPPING CART
-
-          v-tooltip(bottom)
-            template(v-slot:activator='{ on }')
-              v-btn.ml-3(icon, v-on='on', href='https://shop.aliencell.com/', target='_blank', aria-label='Go Shopping')
-                v-icon(color='grey') mdi-cart-outline
-            span Go Shopping
-          v-divider(vertical)
 
           //- PAGE ACTIONS
 
@@ -576,6 +589,14 @@ export default {
 }
 .navHeaderLoading { // To avoid search bar jumping
   width: 22px;
+}
+
+.aliencell-link {
+  .aliencell-text {
+    font-family: 'Poppins', sans-serif;
+    text-decoration: underline;
+    text-transform: none !important;
+  }
 }
 
 </style>

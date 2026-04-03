@@ -94,25 +94,26 @@
 
           //- ALIENCELL SHOP
 
-          v-tooltip(bottom)
-            template(v-slot:activator='{ on }')
-              v-btn.ml-3(
-                text
-                tile
-                height='64'
-                v-on='on'
-                href='https://shop.aliencell.com'
-                target='_blank'
-                aria-label='Visit aliencell.com shop'
-                class='aliencell-link'
-                )
-                span.aliencell-text aliencell.com
-                svg.icon-tabler-icons-tabler-outline.icon-tabler-arrow-up-right(xmlns='http://www.w3.org/2000/svg', width='14', height='14', viewBox='0 0 18 18', fill='none', stroke='currentColor', stroke-width='2', stroke-linecap='round', stroke-linejoin='round', style='margin-left: 4px')
-                  path(stroke='none', d='M0 0h24v24H0z', fill='none')
-                  path(d='M17 7l-10 10')
-                  path(d='M8 7l9 0l0 9')
-            span aliencell.com
-          v-divider(vertical)
+          template(v-if='$vuetify.breakpoint.mdAndUp')
+            v-tooltip(bottom)
+              template(v-slot:activator='{ on }')
+                v-btn.ml-3(
+                  text
+                  tile
+                  height='64'
+                  v-on='on'
+                  href='https://shop.aliencell.com'
+                  target='_blank'
+                  aria-label='Visit aliencell.com shop'
+                  class='aliencell-link'
+                  )
+                  span.aliencell-text aliencell.com
+                  svg.icon-tabler-icons-tabler-outline.icon-tabler-arrow-up-right(xmlns='http://www.w3.org/2000/svg', width='14', height='14', viewBox='0 0 18 18', fill='none', stroke='currentColor', stroke-width='2', stroke-linecap='round', stroke-linejoin='round', style='margin-left: 4px')
+                    path(stroke='none', d='M0 0h24v24H0z', fill='none')
+                    path(d='M17 7l-10 10')
+                    path(d='M8 7l9 0l0 9')
+              span aliencell.com
+            v-divider(vertical)
 
           //- LANGUAGES
 

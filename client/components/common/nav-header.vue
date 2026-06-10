@@ -70,7 +70,7 @@
                 @keyup.up='searchMove(`up`)'
                 autocomplete='none'
               )
-            v-tooltip(bottom)
+            v-tooltip(bottom, v-if='!hideSearch')
               template(v-slot:activator='{ on }')
                 v-btn.ml-2.mr-0(icon, v-on='on', href='/t', :aria-label='$t(`common:header.browseTags`)')
                   v-icon(color='grey') mdi-tag-multiple

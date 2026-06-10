@@ -420,8 +420,8 @@ router.get('/*', async (req, res, next) => {
   const isPage = (stripExt || pageArgs.path.indexOf('.') === -1)
 
   if (isPage) {
-    // -> Accept-Language based redirection for root path
-    if (pageArgs.path === 'home' && !pageArgs.explicitLocale) {
+    // -> Accept-Language based redirection for all pages
+    if (!pageArgs.explicitLocale) {
       const localeHelper = require('../helpers/locale')
       const acceptLanguages = localeHelper.parseAcceptLanguage(req.headers['accept-language'])
 
@@ -432,14 +432,14 @@ router.get('/*', async (req, res, next) => {
           ? WIKI.config.lang.namespaces
           : [WIKI.config.lang.code]
 
-        // Try to find a matching locale with an existing home page
+        // Try to find a matching locale with an existing page
         for (const langCode of acceptLanguages) {
           // Check if the language is in the active locales list
           if (activeLocales.includes(langCode)) {
-            const homeExists = await WIKI.models.pages.checkHomePageExists(langCode)
-            if (homeExists) {
+            const pageExists = await WIKI.models.pages.checkPageExists(pageArgs.path, langCode)
+            if (pageExists) {
               const query = !_.isEmpty(req.query) ? `?${qs.stringify(req.query)}` : ''
-              return res.redirect(`/${langCode}/home${query}`)
+              return res.redirect(`/${langCode}/${pageArgs.path}${query}`)
             }
           }
         }

@@ -1065,6 +1065,28 @@ module.exports = class Page extends Model {
   }
 
   /**
+   * Check if a page exists for the specified path and locale
+   *
+   * @param {string} path - Page path to check
+   * @param {string} localeCode - Locale code to check
+   * @returns {Promise<boolean>} True if page exists, false otherwise
+   */
+  static async checkPageExists(path, localeCode) {
+    try {
+      const page = await WIKI.models.pages.query()
+        .select('id')
+        .where('path', path)
+        .where('localeCode', localeCode)
+        .where('isPublished', true)
+        .first()
+      return !!page
+    } catch (err) {
+      WIKI.logger.warn(`Failed to check page ${path} for locale ${localeCode}: ${err.message}`)
+      return false
+    }
+  }
+
+  /**
    * Save a Page Model Instance to Cache
    *
    * @param {Object} page Page Model Instance

@@ -96,12 +96,22 @@
               .overline.pa-5.pb-0(:class='$vuetify.theme.dark ? `blue--text text--lighten-2` : `primary--text`') {{$t('common:page.toc')}}
               v-list.pb-3(dense, nav, :class='$vuetify.theme.dark ? `darken-3-d3` : ``')
                 template(v-for='(tocItem, tocIdx) in tocDecoded')
-                  a.v-list-item(:href="tocItem.anchor" @click="menuClick")
+                  a.v-list-item.page-toc-item(
+                    :href='tocItem.anchor'
+                    :class='{ "page-toc-item--active": isTocActive(tocItem.anchor) }'
+                    :aria-current='isTocActive(tocItem.anchor) ? `location` : null'
+                    @click='menuClick'
+                    )
                     v-icon(color='grey', small) {{ $vuetify.rtl ? `mdi-chevron-left` : `mdi-chevron-right` }}
                     v-list-item-title.px-3 {{tocItem.title}}
                   //- v-divider(v-if='tocIdx < toc.length - 1 || tocItem.children.length')
                   template(v-for='tocSubItem in tocItem.children')
-                    a.v-list-item(:href="tocSubItem.anchor" @click="menuClick")
+                    a.v-list-item.page-toc-item(
+                      :href='tocSubItem.anchor'
+                      :class='{ "page-toc-item--active": isTocActive(tocSubItem.anchor) }'
+                      :aria-current='isTocActive(tocSubItem.anchor) ? `location` : null'
+                      @click='menuClick'
+                      )
                       v-icon.px-3(color='grey lighten-1', small) {{ $vuetify.rtl ? `mdi-chevron-left` : `mdi-chevron-right` }}
                       v-list-item-title.px-3.caption.grey--text(:class='$vuetify.theme.dark ? `text--lighten-1` : `text--darken-1`') {{tocSubItem.title}}
                     //- v-divider(inset, v-if='tocIdx < toc.length - 1')
@@ -496,6 +506,8 @@ export default {
       navShown: false,
       navExpanded: false,
       upBtnShown: false,
+      activeTocAnchor: '',
+      tocScrollTicking: false,
       pageEditFab: false,
       scrollOpts: {
         duration: 1500,
@@ -650,6 +662,7 @@ export default {
       })
 
       window.boot.notify('page-ready')
+      this.updateActiveToc()
     })
   },
   methods: {
@@ -660,11 +673,63 @@ export default {
       this.navOpen = !this.navOpen
     },
     menuClick (ev) {
+      this.activeTocAnchor = ev.currentTarget.getAttribute('href')
       this.$vuetify.goTo(decodeURIComponent(ev.currentTarget.hash), this.hashTagScrollOpts)
     },
     upBtnScroll () {
       const scrollOffset = window.pageYOffset || document.documentElement.scrollTop
       this.upBtnShown = scrollOffset > window.innerHeight * 0.33
+      if (!this.tocScrollTicking) {
+        this.tocScrollTicking = true
+        window.requestAnimationFrame(() => {
+          this.updateActiveToc()
+          this.tocScrollTicking = false
+        })
+      }
+    },
+    isTocActive (anchor) {
+      return this.activeTocAnchor === anchor
+    },
+    updateActiveToc () {
+      if (!this.$refs.container || !this.tocDecoded.length) {
+        this.activeTocAnchor = ''
+        return
+      }
+
+      const tocItems = _.flatMap(this.tocDecoded, item => [item, ...(item.children || [])])
+      const headings = tocItems.map(item => {
+        if (!item.anchor) { return null }
+        try {
+          const id = decodeURIComponent(item.anchor.replace(/^#/, ''))
+          return {
+            anchor: item.anchor,
+            element: document.getElementById(id)
+          }
+        } catch (err) {
+          return null
+        }
+      }).filter(item => item && item.element)
+
+      if (!headings.length) {
+        this.activeTocAnchor = ''
+        return
+      }
+
+      // Account for the fixed header and sticky breadcrumbs when selecting a section.
+      const activationOffset = this.$vuetify.breakpoint.smAndUp && this.path !== 'home' ? 128 : 72
+      let activeHeading = headings[0]
+      const scrollOffset = window.pageYOffset || document.documentElement.scrollTop
+      const isAtPageBottom = scrollOffset > 0 && Math.ceil(scrollOffset + window.innerHeight) >= document.documentElement.scrollHeight
+      if (isAtPageBottom) {
+        activeHeading = _.last(headings)
+      } else {
+        headings.forEach(heading => {
+          if (heading.element.getBoundingClientRect().top <= activationOffset) {
+            activeHeading = heading
+          }
+        })
+      }
+      this.activeTocAnchor = activeHeading.anchor
     },
     print () {
       if (this.printView) {
@@ -745,6 +810,32 @@ export default {
 
 .page-col-sd::-webkit-scrollbar {
   display: none;
+}
+
+.page-toc-card {
+  .page-toc-item {
+    border-left: 3px solid transparent;
+
+    &--active {
+      background: rgba(33, 150, 243, .12);
+      border-left-color: mc('blue', '500');
+
+      .v-icon,
+      .v-list-item__title {
+        color: mc('blue', '600') !important;
+        font-weight: 600;
+      }
+
+      @at-root .theme--dark & {
+        background: rgba(66, 165, 245, .18);
+
+        .v-icon,
+        .v-list-item__title {
+          color: mc('blue', '200') !important;
+        }
+      }
+    }
+  }
 }
 
 .page-header-section {

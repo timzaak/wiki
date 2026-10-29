@@ -755,7 +755,7 @@ export default {
         })
         const resp = _.get(respRaw, 'data.users.updateProfile.responseResult', {})
         if (resp.succeeded) {
-          Cookies.set('jwt', _.get(respRaw, 'data.users.updateProfile.jwt', ''), { expires: 365 })
+          Cookies.set('jwt', _.get(respRaw, 'data.users.updateProfile.jwt', ''), { expires: 365, secure: window.location.protocol === 'https:' })
           this.$store.set('user/name', this.user.name)
           this.$store.commit('showNotification', {
             message: this.$t('profile:save.success'),
@@ -863,7 +863,7 @@ export default {
             this.currentPass = ''
             this.newPass = ''
             this.verifyPass = ''
-            Cookies.set('jwt', _.get(respRaw, 'data.users.changePassword.jwt', ''), { expires: 365 })
+            Cookies.set('jwt', _.get(respRaw, 'data.users.changePassword.jwt', ''), { expires: 365, secure: window.location.protocol === 'https:' })
             this.$store.commit('showNotification', {
               message: this.$t('profile:auth.changePassSuccess'),
               style: 'success',
